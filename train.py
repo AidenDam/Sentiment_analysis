@@ -39,7 +39,6 @@ def train(model, train_loader, valid_loader, criterion, optimizer, batch_size=50
         model.train()
         for inputs, labels in tqdm(train_loader, desc='Train', leave=False):
             inputs, labels = inputs.to(device), labels.to(device)
-            print(inputs.shape)
             model.zero_grad()
             output = model(inputs)
 
