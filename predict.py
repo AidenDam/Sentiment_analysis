@@ -1,5 +1,4 @@
 import torch
-import numpy as np
 
 from utils.utils import get_model, one_hot_word, predict_text
 
@@ -22,8 +21,11 @@ output_dim = 3
 labels = ('negative', 'neutral', 'positive')
 
 model = get_model(args.model, num_layers, vocab_size, hidden_dim, embedding_dim, output_dim).to(device)
-model.load_state_dict(torch.load(args.weight))
+model.load_state_dict(torch.load(args.weight, map_location=torch.device(device)))
+
+def predict(text):
+    return labels[predict_text(model, text, vocab, device)]
 
 if __name__ == '__main__':
     text = 'Tốt lắm'
-    print(labels[predict_text(model, text, vocab, device)])
+    print(predict(text))
