@@ -1,13 +1,13 @@
 import torch.nn as nn
 
 class SentimentRNN(nn.Module):
-  def __init__(self, no_layers, vocab_size, hidden_dim, embedding_dim, output_dim=3):
+  def __init__(self, num_layers, vocab_size, hidden_dim, embedding_dim, output_dim=3, drop_prob=0.5):
     super(SentimentRNN,self).__init__()
 
     self.output_dim = output_dim
     self.hidden_dim = hidden_dim
 
-    self.no_layers = no_layers
+    self.num_layers = num_layers
     self.vocab_size = vocab_size
 
     # embedding and LSTM layers
@@ -15,21 +15,20 @@ class SentimentRNN(nn.Module):
     
     # lstm
     self.lstm = nn.LSTM(input_size=embedding_dim,hidden_size=self.hidden_dim,
-                        num_layers=no_layers, batch_first=True)
+                        num_layers=num_layers, batch_first=True)
     
     # dropout layer
-    self.dropout = nn.Dropout(0.3)
+    self.dropout = nn.Dropout(drop_prob)
 
-    # linear and sigmoid layer
+    # linear layer
     self.fc = nn.Linear(self.hidden_dim, output_dim)
       
-  def forward(self, x, hidden = None):
+  def forward(self, x):
     batch_size = x.size(0)
     # embeddings and lstm_out
     embeds = self.embedding(x)  # shape: B x S x Feature   since batch = True
     
-    # print(embeds.shape)  # [50, 500, 1000]
-    lstm_out, hidden = self.lstm(embeds, hidden)
+    lstm_out, _ = self.lstm(embeds)
     lstm_out = lstm_out.contiguous().view(-1, self.hidden_dim) 
     
     # dropout and fully connected layer
@@ -37,12 +36,11 @@ class SentimentRNN(nn.Module):
     out = self.fc(out)
 
     # sigmoid function
-    sig_out = nn.functional.log_softmax(out, 1)
+    log_out = nn.functional.log_softmax(out, -1)
     
     # reshape to be batch_size first
-    sig_out = sig_out.view(batch_size, sig_out.shape[0]//batch_size, self.output_dim)
+    log_out = log_out.view(batch_size, log_out.shape[0]//batch_size, self.output_dim)
 
-    sig_out = sig_out[:, -1, :] # get last batch of labels
+    log_out = log_out[:, -1, :] # get last batch of labels
 
-    # return last sigmoid output and hidden state
-    return sig_out, hidden
+    return log_out

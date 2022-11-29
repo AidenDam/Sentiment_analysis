@@ -7,15 +7,30 @@ import os
 import gdown
 import shutil
 
-stop_words = r'vietnamese-stopwords.txt'
+from . import utils
 
-# Download stop-words for Vietnamese
 path_nltk = os.path.join(os.path.expanduser('~'), 'nltk_data/corpora/stopwords/')
-if not os.path.exists(path_nltk):
-    os.makedirs(path_nltk)
-if not os.path.exists(path_nltk + stop_words):
-    gdown.download('https://github.com/stopwords/vietnamese-stopwords/blob/master/vietnamese-stopwords.txt', path_nltk + stop_words, quiet=False)
+filename_stop_words = 'vietnamese-stopwords.txt'
+filename_vocab = path_nltk + 'vocab.txt'
+
+# Download data for Vietnamese
+def init():
+    if not os.path.exists(path_nltk):
+        os.makedirs(path_nltk)
+
+    if not os.path.exists(path_nltk + filename_stop_words):
+        gdown.download('https://github.com/stopwords/vietnamese-stopwords/blob/master/vietnamese-stopwords.txt', path_nltk + filename_stop_words, quiet=False)
+    
+    if not os.path.exists(filename_vocab):
+        gdown.download('https://drive.google.com/uc?id=1nzak5OkrheRV1ltOGCXkT671bmjODLhP&export=download', filename_vocab, quiet=False)
+        
+        words = utils.fil_voca(filename_vocab)
+        with open(filename_vocab, 'w') as f:
+            for word in words:
+                f.write(f'{word}\n')
+init()
 # end
+
 
 def imcomplete_version_datadet(filename_train, filename_val, filename_test):
     url_train = r'https://datasets-server.huggingface.co/first-rows?dataset=uit-nlp%2Fvietnamese_students_feedback&config=default&split=train'
