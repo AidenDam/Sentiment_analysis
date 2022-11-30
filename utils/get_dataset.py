@@ -24,7 +24,7 @@ def init():
     if not os.path.exists(filename_vocab):
         gdown.download('https://drive.google.com/uc?id=1nzak5OkrheRV1ltOGCXkT671bmjODLhP&export=download', filename_vocab, quiet=False)
         
-        words = utils.fil_voca(filename_vocab)
+        words = utils.fil_vocab(filename_vocab)
         with open(filename_vocab, 'w') as f:
             for word in words:
                 f.write(f'{word}\n')
