@@ -3,3 +3,6 @@ pandas
 gdown
 nltk
 torch
+transformers
+chardet
+Flask

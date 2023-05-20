@@ -1,7 +1,7 @@
 from flask import Flask, request
 import argparse
 
-from predict import predict
+from predict import phobeart_predict
 
 parser = argparse.ArgumentParser(description='Choose option')
 parser.add_argument('-p', '--port', type=int, default=8000)
@@ -13,7 +13,7 @@ app = Flask(__name__)
 @app.post('/predict_label')
 def check(): 
     txt = request.form.get('txt')
-    label = predict(txt)
+    label = phobeart_predict(txt)
     return {'label': label}
 
 if __name__ == '__main__':
