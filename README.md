@@ -2,7 +2,7 @@
 
 Sentiment analysis of students' feedback for HIT club leaders with 3 labels ('negative', 'neutral', 'positive').
 
-Achieved 88% F1-score accuracy in Vietnamese students feed-back dataset in HuggingFace.
+Achieved 93.5% F1-score accuracy in Vietnamese students feed-back dataset in HuggingFace.
 ## Run
 
 ```bash
